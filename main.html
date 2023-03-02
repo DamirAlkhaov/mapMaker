@@ -1,0 +1,59 @@
+<html>
+<head>
+<script src='perlin.js'></script>
+<style>
+	body {
+		background-color: grey;
+	}
+	canvas {
+		image-rendering: pixelated;
+	}
+</style>
+</head>
+<body>
+<canvas id='cnvs'></canvas>
+<script>
+'use strict';
+let cnvs = document.getElementById('cnvs');
+cnvs.width = cnvs.height = 200;
+let ctx = cnvs.getContext('2d');
+
+const GRID_SIZE = 4;
+const RESOLUTION = 200;
+const COLOR_SCALE = 255;
+
+let pixel_size = cnvs.width / RESOLUTION;
+let num_pixels = GRID_SIZE / RESOLUTION;
+console.log(pixel_size + " " + num_pixels)
+let array = new Array(200)
+for (let y = 0; y < GRID_SIZE; y += num_pixels){
+	array[Math.floor((Math.ceil(y*100)/100) / GRID_SIZE * cnvs.width)] = new Array(200)
+    for (let x = 0; x < GRID_SIZE; x += num_pixels){
+        let v = perlin.get(y, x);
+		v = Math.abs(Math.floor(v))
+		console.log()
+		array[Math.floor((Math.ceil(y*100)/100) / GRID_SIZE * cnvs.width)][Math.floor((Math.ceil(x*100)/100) / GRID_SIZE * cnvs.width)] = v
+
+		v*=COLOR_SCALE
+        ctx.fillStyle = 'hsl(0,0%,'+v+'%)';
+        ctx.fillRect(
+            x / GRID_SIZE * cnvs.width,
+            y / GRID_SIZE * cnvs.width,
+            pixel_size,
+            pixel_size
+        );
+		
+    }
+}
+var a = document.createElement("a");
+a.href = window.URL.createObjectURL(new Blob([JSON.stringify(array)], {type: "text/plain"}));
+a.download = "demo.txt";
+function download () {
+	a.click()
+}
+//a.click()
+
+console.log(JSON.parse(JSON.stringify(array)))
+</script>
+</body>
+</html>
